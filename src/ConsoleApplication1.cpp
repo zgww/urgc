@@ -1,0 +1,91 @@
+﻿// ConsoleApplication1.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
+//
+
+#include <iostream>
+#include <functional>
+#include "Urgc.h"
+
+
+//template<typename F, typename Ret, typename ...Args>
+//std::function<Ret(Args ...)> helper(Ret(F::*)(Args...));
+
+//template<typename F, typename Ret, typename ...Args, typename T = Ret(Args...)>
+//std::function<Ret(Args ...)> helper(Ret(F::*)(Args...) const);
+
+//template<typename F, typename Ret, typename ...Args, typename T = Ret(Args...)>
+//T helper(Ret(F::*)(Args...) );
+//
+//template<typename F, typename Ret, typename ...Args, typename T = Ret(Args...)>
+//T helper(Ret(F::*)(Args...) const);
+//
+//
+//template<typename F>
+//struct GetLambda {
+//    typedef decltype( helper(&F::operator()) ) type;
+//};
+
+class A {
+public :
+    int age;
+    ~A() {
+        printf("a free\n");
+    }
+};
+void xx() {
+    
+}
+int main()
+{
+    std::cout << "Hello World!\n";
+    Local<A> a = new A();
+    auto b = (xx(), []() {});
+    printf("age :%d %d\n", a->age, b);
+    int age = a->age;
+    age = 12309;
+    auto cb = closure_of([&]() {
+        printf("var age:%d\n", age);
+    });
+    cb->call();
+
+
+    std::function<void()> fn0 = []() {printf("fn0\n"); };
+    std::function<void()> fn1 = [=]() {printf("fn1 age :%d\n", age); };
+    std::function<void(int, int, int)> fn3 = [=](int b, int c, int g) {printf("catch:%d %d %d %d\n", age, b, c, g); };
+    std::function<void(int, int, int)> fn4 = [&](int b, int c, int g) {printf("catch:%d\n", age); };
+    printf("fn size:%d %d %d %d\n", sizeof(fn0), sizeof(fn1), sizeof(fn3), sizeof(fn4));
+
+    auto c = create_closure<void()>();
+    auto c2 = (Closure<void(int)>*)c;
+    c2->call = [=](int age) {printf("hi:%d\n", age); };
+    //memcpy(&c->call, &fn3, sizeof(fn0));
+    /*auto c2 = (Closure<void(int, int, int)>*) c;
+    c2->call(1, 2, 3);*/
+    c2->call(10);
+    delete  c;
+    //auto c3 = create_closure<void()>();
+    //std::function<void( int)> fn5 = [](int name) {printf("c4 name:%d\n", name); };
+
+    ////memcpy(&c3->call, &fn5, sizeof(fn5));
+    //////auto c4 = (Closure<void(int)>*)closure_of2(c3, fn5);
+    ////auto c5 = (Closure<void(int)>*) c3;
+    ////c5->call(2);
+    ////c4->call(1);
+
+    //auto sfn = closure_of2(c3, [](int name) {printf("lala name:%d\n", name); });
+    //sfn->call(1233333);
+    auto c5 = CLOSURE([=](int age, int name) {printf("hi %d, %d\n", age, name); });
+    c5->call(994389, 3);
+    printf("tmp\n");
+    //delete c5;
+}
+
+// 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
+// 调试程序: F5 或调试 >“开始调试”菜单
+
+// 入门使用技巧: 
+//   1. 使用解决方案资源管理器窗口添加/管理文件
+//   2. 使用团队资源管理器窗口连接到源代码管理
+//   3. 使用输出窗口查看生成输出和其他消息
+//   4. 使用错误列表窗口查看错误
+//   5. 转到“项目”>“添加新项”以创建新的代码文件，或转到“项目”>“添加现有项”以将现有代码文件添加到项目
+//   6. 将来，若要再次打开此项目，请转到“文件”>“打开”>“项目”并选择 .sln 文件
