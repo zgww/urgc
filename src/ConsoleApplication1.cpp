@@ -34,8 +34,69 @@ public :
 void xx() {
     
 }
+
+
+class User {
+public:
+    int age = 0;
+    ~User() {
+        printf("release User. age:%d\n", age);
+    }
+};
+class Node {
+public:
+    //此处的this，是为了让Local知道谁是引用的主体
+    Local<Node> other{ nullptr, this };
+    Local<Node> other2{ nullptr, this };
+    std::string name = "";
+    ~Node() {
+        printf("release Node. name=:%s\n", name.c_str());
+    }
+};
+void demo0() {
+    Local<User> user = new User();
+    ///出了作用域后，user就会自动释放掉
+}
+
+auto get_cb() {
+    Local<User> user = new User();
+    user->age = 923;
+    //
+    auto fn = CLOSURE([=]() {
+        printf("hi urgc: user age:%d\n", user->age);
+        });
+    return fn;
+}
+void demo1() {
+    auto fn = get_cb();
+    fn->call();
+}
+auto create_a() {
+    Local<Node> a = new Node();
+    return a;
+}
+void demo2() {
+    Local<Node> a = create_a();
+    Local<Node> b = new Node();
+    Local<Node> c = new Node();
+    Local<Node> d = new Node();
+    a->name = "a";
+    b->name = "b";
+    c->name = "c";
+    d->name = "d";
+    //循环引用
+    a->other = b;
+    b->other = a;
+
+    a->other2 = c;
+    c->other = d;
+    d->other = a;
+    d->other2 = b;
+    //出了作用域后,a和b都会释放掉
+}
 int main()
 {
+
     std::cout << "Hello World!\n";
     Local<A> a = new A();
     auto b = (xx(), []() {});
@@ -77,6 +138,9 @@ int main()
     c5->call(994389, 3);
     printf("tmp\n");
     //delete c5;
+    demo0();
+    demo1();
+    demo2();
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
