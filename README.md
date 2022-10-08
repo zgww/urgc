@@ -122,6 +122,8 @@ int main(){
 
 ```
 
+`ConsoleApplication1.cpp`有以上的测试代码
+
 
 ## 原理
 
