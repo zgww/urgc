@@ -113,7 +113,7 @@ void say(){
     c->other = d;
     d->other = a;
     d->other2 = b;
-    //出了作用域后,a和b都会释放掉
+    //出了作用域后,a和b,c,d都会释放掉
 }
 int main(){
     say();
